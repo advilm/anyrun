@@ -5,12 +5,18 @@ use scrubber::DesktopEntry;
 use serde::Deserialize;
 use std::{env, fs, path::PathBuf, process::Command};
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 pub struct Config {
+    #[serde(default)]
     desktop_actions: bool,
+    #[serde(default = "Config::default_max_entries")]
     max_entries: usize,
+    #[serde(default)]
     terminal: Option<Terminal>,
+    #[serde(default)]
     preprocess_exec_script: Option<PathBuf>,
+    #[serde(default)]
+    hide_descriptions: bool,
 }
 
 #[derive(Deserialize)]
@@ -19,14 +25,9 @@ pub struct Terminal {
     args: String,
 }
 
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            desktop_actions: false,
-            max_entries: 5,
-            preprocess_exec_script: None,
-            terminal: None,
-        }
+impl Config {
+    pub fn default_max_entries() -> usize {
+        5
     }
 }
 
@@ -222,7 +223,11 @@ pub fn get_matches(input: RString, state: &State) -> RVec<Match> {
         .into_iter()
         .map(|(entry, id, _)| Match {
             title: entry.localized_name().into(),
-            description: entry.desc.clone().map(|desc| desc.into()).into(),
+            description: if state.config.hide_descriptions {
+                ROption::RNone
+            } else {
+                entry.desc.clone().map(|desc| desc.into()).into()
+            },
             use_pango: false,
             icon: ROption::RSome(entry.icon.clone().into()),
             id: ROption::RSome(id),
