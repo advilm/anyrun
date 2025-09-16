@@ -46,15 +46,17 @@ fn info() -> PluginInfo {
 
 #[get_matches]
 fn get_matches(input: RString, state: &State) -> RVec<Match> {
+    if input.is_empty() {
+        return RVec::new();
+    }
+
     let input = if let Some(input) = input.strip_prefix(&state.config.prefix) {
         input.trim()
     } else {
         return RVec::new();
     };
 
-    if input.is_empty() {
-        vec![]
-    } else if let Some(ref error_message) = state.error_message {
+    if let Some(ref error_message) = state.error_message {
         get_error_matches(error_message)
     } else if let Some(pending_action) = state.pending_action {
         get_confirm_matches(pending_action)
