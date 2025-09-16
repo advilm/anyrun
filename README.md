@@ -189,7 +189,9 @@ inside the configuration. The list of plugins in this repository is as follows:
   - Quickly translate text.
 - [Kidex](plugins/kidex/README.md) `libkidex.so`
   - File search provided by [Kidex](https://github.com/Kirottu/kidex).
-- [Randr](plugins/randr/README.md) `librandr.so`
+- [Powermenu](/plugins/powermenu/README.md)
+  - System power menu actions: lock, log out, power off, etc.
+- [Randr](plugins/randr/README.md)
   - Rotate and resize; quickly change monitor configurations on the fly.
   - TODO: Only supports Hyprland, needs support for other compositors.
 - [Stdin](plugins/stdin/README.md) `libstdin.so`
