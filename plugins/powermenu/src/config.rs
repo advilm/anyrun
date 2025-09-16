@@ -10,6 +10,7 @@ pub struct PowerActionConfig {
 
 #[derive(Deserialize)]
 pub struct Config {
+    pub prefix: String,
     #[serde(default = "Config::default_lock_config")]
     lock: PowerActionConfig,
     #[serde(default = "Config::default_logout_config")]
@@ -82,6 +83,7 @@ impl Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
+            prefix: "".to_string(),
             lock: Self::default_lock_config(),
             logout: Self::default_logout_config(),
             poweroff: Self::default_poweroff_config(),

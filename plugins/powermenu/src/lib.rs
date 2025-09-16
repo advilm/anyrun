@@ -46,6 +46,12 @@ fn info() -> PluginInfo {
 
 #[get_matches]
 fn get_matches(input: RString, state: &State) -> RVec<Match> {
+    let input = if let Some(input) = input.strip_prefix(&state.config.prefix) {
+        input.trim()
+    } else {
+        return RVec::new();
+    };
+
     if input.is_empty() {
         vec![]
     } else if let Some(ref error_message) = state.error_message {
