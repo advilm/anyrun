@@ -177,7 +177,7 @@ pub fn init(config_dir: RString) -> State {
 
 #[get_matches]
 pub fn get_matches(input: RString, state: &State) -> RVec<Match> {
-    let matcher = fuzzy_matcher::skim::SkimMatcherV2::default().smart_case();
+    let matcher = fuzzy_matcher::skim::SkimMatcherV2::default().ignore_case();
     let mut entries = state
         .entries
         .iter()
@@ -194,21 +194,21 @@ pub fn get_matches(input: RString, state: &State) -> RVec<Match> {
                 .and_then(|desc| matcher.fuzzy_match(desc, &input))
                 .unwrap_or(0);
 
-            let keyword_score = entry
-                .keywords
-                .iter()
-                .filter_map(|kw| matcher.fuzzy_match(kw, &input))
+            let keyword_score = (entry.keywords.iter())
+                .chain(entry.localized_keywords.iter().flat_map(|k| k.iter()))
+                .filter_map(|keyword| matcher.fuzzy_match(keyword, &input))
                 .max()
                 .unwrap_or(0);
 
-            let mut score = (name_score * 3 + desc_score + keyword_score) - entry.offset;
+            let mut score = (name_score * 10 + desc_score + keyword_score) - entry.offset;
 
             // prioritize actions
             if entry.is_action {
                 score *= 2;
             }
 
-            if score > 20 {
+            // Score cutoff
+            if score > 0 {
                 Some((entry, *id, score))
             } else {
                 None
