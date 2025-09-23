@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default-linux";
+    anyrun-provider = {
+      url = "github:anyrun-org/anyrun-provider";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
@@ -73,6 +77,8 @@
               translate = mkPlugin "translate";
               websearch = mkPlugin "websearch";
               niri-focus = mkPlugin "niri-focus";
+
+              anyrun-provider = inputs.anyrun-provider.packages.${pkgs.system}.default;
             };
 
           # Set up an overlay from packages exposed by this flake
